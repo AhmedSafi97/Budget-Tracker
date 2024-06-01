@@ -6,27 +6,45 @@
   padding: 20px;
 }
 
-h1 {
-  color: #333;
+.App-header {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 0;
+  margin-bottom: 20px;
 }
 
-.input-group, .filter-group, .spendings-list {
+.App-nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: #333;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.App-nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.App-nav-link:hover {
+  text-decoration: underline;
+}
+
+.input-group, .filter-group, .spendings-list, .category-list {
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.input-group, .filter-group, .spendings-list, .category-list {
-  margin-bottom: 20px;
-}
-
-.input-group input, .input-group select {
+.input-group input, .input-group select, .filter-group select, .filter-group input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.input-group button {
+.input-group button, .category-list button, .spending-item button {
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -35,28 +53,14 @@ h1 {
   cursor: pointer;
 }
 
-.input-group button:hover {
+.input-group button:hover, .category-list button:hover, .spending-item button:hover {
   background-color: #0056b3;
 }
 
-.filter-group select, .filter-group input {
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.filter-group button {
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.filter-group button:hover {
-  background-color: #218838;
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .category-list ul, .spendings-list ul {
@@ -64,7 +68,7 @@ h1 {
   padding: 0;
 }
 
-.category-list li, .spendings-list .spending-item {
+.category-list li, .spending-item {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   display: flex;
@@ -72,19 +76,14 @@ h1 {
   align-items: center;
 }
 
-.spendings-list h3 {
-  color: #333;
-}
-
-.category-list button, .spending-item button {
+.spending-item button {
   background-color: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
 }
 
-.category-list button:hover, .spending-item button:hover {
+.spending-item button:hover {
   background-color: #ff1a1a;
+}
+
+.spending-item h3 {
+  color: #333;
 }
