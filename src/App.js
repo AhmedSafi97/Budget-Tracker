@@ -101,7 +101,29 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Budget Tracker</h1>
+      <h1>Spending Tracker</h1>
+
+
+      <div className="filter-group">
+        <select value={filter} onChange={handleFilterChange}>
+          <option value="day">Per Day</option>
+          <option value="week">Per Week</option>
+          <option value="month">Per Month</option>
+        </select>
+        <input type="date" value={format(new Date(filterDate), 'yyyy-MM-dd')} onChange={handleFilterDateChange} />
+      </div>
+
+      <div className="spendings-list">
+        <ul>
+          {filteredSpendings.map((spending, index) => (
+            <li key={index} className="spending-item">
+              {spending.category} - {spending.amount} EGP - {format(new Date(spending.date), 'yyyy-MM-dd')}
+              <button onClick={() => handleRemoveSpending(index)}>Remove</button>
+            </li>
+          ))}
+        </ul>
+        <h3>Total: {total} EGP</h3>
+      </div>
 
       <div className="input-group">
         <input type="text" value={newCategory} onChange={handleCategoryChange} placeholder="New Category" />
@@ -130,29 +152,6 @@ function App() {
         <input type="number" name="amount" value={newSpending.amount} onChange={handleSpendingChange} placeholder="Amount (EGP)" />
         <input type="date" name="date" value={format(new Date(newSpending.date), 'yyyy-MM-dd')} onChange={handleSpendingChange} />
         <button onClick={handleAddSpending}>Add Spending</button>
-      </div>
-
-      <div className="filter-group">
-        <h2>Filter Spendings</h2>
-        <select value={filter} onChange={handleFilterChange}>
-          <option value="day">Per Day</option>
-          <option value="week">Per Week</option>
-          <option value="month">Per Month</option>
-        </select>
-        <input type="date" value={format(new Date(filterDate), 'yyyy-MM-dd')} onChange={handleFilterDateChange} />
-      </div>
-
-      <div className="spendings-list">
-        <h2>Spendings</h2>
-        <ul>
-          {filteredSpendings.map((spending, index) => (
-            <li key={index} className="spending-item">
-              {spending.category} - {spending.amount} EGP - {format(new Date(spending.date), 'yyyy-MM-dd')}
-              <button onClick={() => handleRemoveSpending(index)}>Remove</button>
-            </li>
-          ))}
-        </ul>
-        <h3>Total: {total} EGP</h3>
       </div>
     </div>
   );
