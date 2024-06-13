@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { format, isSameDay, isSameWeek, isSameMonth } from 'date-fns';
-import defaultCategories from "./defaultCategories.json"
+import { format, isSameMonth } from 'date-fns';
+import defaultCategories from "./defaultCategories.json";
 import './Home.css';
 
 function Home() {
@@ -18,8 +18,9 @@ function Home() {
         date: new Date(),
     });
 
-    const [filter, setFilter] = useState('month');
     const [filterDate, setFilterDate] = useState(new Date());
+    const [filterCategory, setFilterCategory] = useState('all');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('categories', JSON.stringify(categories));
@@ -33,6 +34,7 @@ function Home() {
         if (newSpending.category && newSpending.amount) {
             setSpendings([...spendings, newSpending]);
             setNewSpending({ category: '', amount: '', date: new Date() });
+            setIsModalOpen(false); // Close modal after adding spending
         }
     };
 
@@ -41,8 +43,8 @@ function Home() {
         [e.target.name]: e.target.value
     });
 
-    const handleFilterChange = (e) => setFilter(e.target.value);
     const handleFilterDateChange = (e) => setFilterDate(new Date(e.target.value));
+    const handleFilterCategoryChange = (e) => setFilterCategory(e.target.value);
 
     const handleRemoveSpending = (index) => {
         const updatedSpendings = spendings.filter((_, i) => i !== index);
@@ -52,16 +54,9 @@ function Home() {
     const filterSpendings = (spendings) => {
         return spendings.filter(spending => {
             const spendingDate = new Date(spending.date);
-            switch (filter) {
-                case 'day':
-                    return isSameDay(spendingDate, filterDate);
-                case 'week':
-                    return isSameWeek(spendingDate, filterDate, { weekStartsOn: 1 });
-                case 'month':
-                    return isSameMonth(spendingDate, filterDate);
-                default:
-                    return false;
-            }
+            const isSameMonthYear = isSameMonth(spendingDate, filterDate);
+            const isSameCategory = filterCategory === 'all' || spending.category === filterCategory;
+            return isSameMonthYear && isSameCategory;
         });
     };
 
@@ -72,41 +67,58 @@ function Home() {
     const filteredSpendings = filterSpendings(spendings);
     const total = calculateTotal(filteredSpendings);
 
+    const closeModal = (e) => {
+        if (e.target.className === 'modal') {
+            setIsModalOpen(false);
+        }
+    };
+
     return (
         <div className="Home">
-            <div className="input-group">
-                <select name="category" value={newSpending.category} onChange={handleSpendingChange}>
-                    <option value="">Select Category</option>
-                    {categories.map((category, index) => (
-                        <option key={index} value={category}>{category}</option>
-                    ))}
-                </select>
-                <input type="number" name="amount" value={newSpending.amount} onChange={handleSpendingChange} placeholder="Amount (EGP)" />
-                <input type="date" name="date" value={format(new Date(newSpending.date), 'yyyy-MM-dd')} onChange={handleSpendingChange} />
-                <button onClick={handleAddSpending}>Add Spending</button>
-            </div>
-
-
-
             <div className="spendings-list">
                 <h2>Spendings: {total} EGP</h2>
                 <div className="filter-group">
-                    <select value={filter} onChange={handleFilterChange}>
-                        <option value="day">Per Day</option>
-                        <option value="week">Per Week</option>
-                        <option value="month">Per Month</option>
+                    <input type="month" value={format(new Date(filterDate), 'yyyy-MM')} onChange={handleFilterDateChange} />
+                    <select value={filterCategory} onChange={handleFilterCategoryChange}>
+                        <option value="all">All Categories</option>
+                        {categories.map((category, index) => (
+                            <option key={index} value={category}>{category}</option>
+                        ))}
                     </select>
-                    <input type="date" value={format(new Date(filterDate), 'yyyy-MM-dd')} onChange={handleFilterDateChange} />
                 </div>
-                <ul>
+                <ul className="spending-items">
                     {filteredSpendings.map((spending, index) => (
                         <li key={index} className="spending-item">
-                            {spending.category} - {spending.amount} EGP - {format(new Date(spending.date), 'yyyy-MM-dd')}
-                            <button onClick={() => handleRemoveSpending(index)}>Remove</button>
+                            <div className="spending-details">
+                                <span className="spending-category">{spending.category}</span>
+                                <span className="spending-amount">{spending.amount} EGP</span>
+                                <span className="spending-date">{format(new Date(spending.date), 'yyyy-MM-dd')}</span>
+                            </div>
+                            <button className="remove-button" onClick={() => handleRemoveSpending(index)}>Remove</button>
                         </li>
                     ))}
                 </ul>
             </div>
+
+            <button className="add-button" onClick={() => setIsModalOpen(true)}>+</button>
+
+            {isModalOpen && (
+                <div className="modal" onClick={closeModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="input-group">
+                            <select name="category" value={newSpending.category} onChange={handleSpendingChange}>
+                                <option value="">Select Category</option>
+                                {categories.map((category, index) => (
+                                    <option key={index} value={category}>{category}</option>
+                                ))}
+                            </select>
+                            <input type="number" name="amount" value={newSpending.amount} onChange={handleSpendingChange} placeholder="Amount (EGP)" />
+                            <input type="date" name="date" value={format(new Date(newSpending.date), 'yyyy-MM-dd')} onChange={handleSpendingChange} />
+                            <button onClick={handleAddSpending}>Add Spending</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
