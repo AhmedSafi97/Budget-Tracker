@@ -73,6 +73,18 @@ function Home() {
         }
     };
 
+    const handleExport = () => {
+        const blob = new Blob([JSON.stringify(filteredSpendings)], { type: 'application/json;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'spendings.json');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="Home">
             <div className="spendings-list">
@@ -86,6 +98,13 @@ function Home() {
                         ))}
                     </select>
                 </div>
+                <button onClick={handleExport} style={{
+                    padding: '15px',
+                    width: 'fit-content',
+                    background: 'transparent',
+                    border: 'solid 1px',
+                    borderRadius: '3px'
+                }}>Export Spendings</button>
                 <ul className="spending-items">
                     {filteredSpendings.map((spending, index) => (
                         <li key={index} className="spending-item">
